@@ -25,7 +25,7 @@ screen2polar <- function( origin, dest ) {
   if( vx < 0 && vy > 0 ) theta <- pi - theta; # upper-left
   if( vx > 0 && vy < 0 ) theta <- 2*pi - theta; # lower-right
   if( vx < 0 && vy==0 ) theta <- pi;
-  if( vx==0 && vy < 0 ) theta <- 3*pi/2; 
+  if( vx==0 && vy < 0 ) theta <- 3*pi/2;
   ## return angle and dist
   c( theta, dist );
 }
@@ -91,25 +91,25 @@ point_on_line <- function( x , y , p ) {
 # the progression argument is a vector of how deep to draw each layer in garden
 
 garden <- function( arc , possibilities , data , alpha.fade = 0.25 , col.open=2 , col.closed=1 , hedge=0.1 , hedge1=0 , newplot=TRUE , plot.origin=FALSE , cex=1.5 , lwd=2 , adj.cex , adj.lwd , lwd.dat=1 , ring_dist , progression , prog_dat , xlim=c(-1,1) , ylim=c(-1,1) , thresh=0.2 , ... ) {
-    
+
     poss.cols <- ifelse( possibilities==1 , rangi2 , "white" )
-    
+
     if ( missing(adj.cex) ) adj.cex=rep(1,length(data))
     if ( missing(adj.lwd) ) adj.lwd=rep(1,length(data))
-    
+
     if ( newplot==TRUE ) {
     # empty plot
         par(mgp = c(1.5, 0.5, 0), mar = c(1, 1, 1, 1) + 0.1, tck = -0.02)
         plot( NULL , xlim=xlim , ylim=ylim , bty="n" , xaxt="n" , yaxt="n" , xlab="" , ylab="" )
     }
-    
+
     if ( plot.origin==TRUE ) point.polar( 0 , 0 , pch=16 )
-    
+
     N <- length(data)
     n_poss <- length(possibilities)
-    
+
     # draw rings
-    
+
     # compute distance out for each ring
     # use golden ratio 1.618 for each successive ring
     goldrat <- 1.618
@@ -120,20 +120,20 @@ garden <- function( arc , possibilities , data , alpha.fade = 0.25 , col.open=2 
         ring_dist <- ring_dist / sum(ring_dist)
         #ring_dist <- cumsum(ring_dist)
     }
-    
+
     if ( length(alpha.fade)==1 ) alpha.fade <- rep(alpha.fade,N)
     if ( length(col.open)==1 ) col.open <- rep(col.open,N)
     if ( length(col.closed)==1 ) col.closed <- rep(col.closed,N)
-    
+
     draw_wedge <- function(r,hit_prior,arc2,hedge=0.1,hedge1=0,lines_to) {
-    
+
         # is each path clear?
         hit <- hit_prior * ifelse( possibilities==data[r] , 1 , 0 )
-        
+
         # transparency for blocked paths
         alpha <- ifelse( hit==1 , 1 , alpha.fade[r] )
         the_col <- ifelse( hit==1 , col.open , col.closed )
-        
+
         # draw wedge
         hedge_use <- ifelse( r==1 , hedge1 , hedge )
 
@@ -157,13 +157,13 @@ garden <- function( arc , possibilities , data , alpha.fade = 0.25 , col.open=2 
                 pts2 <- draw_wedge(r+1,hit[j],new_arc,hedge,lines_to=pts[j,])
             }#j
         }# N>r
-        
+
         # draw lines back to parent point
         if ( !missing(lines_to) ) {
             for ( k in 1:n_poss ) {
                 #alpha_l <- ifelse( hit==1 , 1 , alpha.fade[r] )
                 # path line
-                
+
                 if ( progression[r] > thresh ) {
                     ptend <- point_on_line( c(lines_to[1],pts[k,1]) , c(lines_to[2],pts[k,2]) , progression[r] )
                     line.short( c(lines_to[1],ptend[1]) , c(lines_to[2],ptend[2]) , lwd=lwd*adj.lwd[r] , short=0.04 , col=col.closed[1] )
@@ -174,15 +174,15 @@ garden <- function( arc , possibilities , data , alpha.fade = 0.25 , col.open=2 
                 }
             }
         } # lines_to
-        
+
         return(pts)
-        
+
     }
-    
+
     pts1 <- draw_wedge(1,1,arc=arc,hedge=hedge,lines_to=c(0,0))
-    
+
     invisible(pts1)
-    
+
 }
 
 
@@ -203,7 +203,8 @@ garden(
     hedge = 0.05,
     ring_dist=ring_dist,
     alpha.fade=1,
-    progression=c(1,1,0.1)
+    progression=c(1,1,0.1),
+    prog_dat=c(0,0,0)
 )
 
 ####
